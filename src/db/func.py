@@ -15,12 +15,28 @@ class ChatMethod:
         chat: Chat = Chat.get_or_create(Chat.peer_id == chat_id)
         return chat
 
-    def new_hedgehog(cls, chat_id: int, picture: str | None):
+    def _get_subscribers() -> list[Chat]:
 
-        chat = cls.get(chat_id=chat_id)
-        chat.new_hedgehog = picture
-        chat.save()
+        subs: list[Chat] = Chat.select().where(Chat.newsletter)
+        return subs
 
+    @classmethod
+    def get_subscribers_id(cls):
+
+        subs = cls._get_subscribers()
+        subs_id = [chat.peer_id for chat in subs]
+
+        for i in range((len(subs_id) + 99) // 100):
+            yield subs_id[i*100:(i+1)*100]
+
+    @classmethod
+    def new_hedgehog(cls, picture: str | None):
+
+        for chat in cls._get_subscribers():
+            chat.new_hedgehog = picture
+            chat.save()
+
+    @classmethod
     def newsletter(cls, chat_id: int, state: bool) -> bool:
 
         chat = cls.get(chat_id=chat_id)
@@ -34,10 +50,12 @@ class ChatMethod:
 
 class UserMethod:
 
+    @classmethod
     def add(cls, from_id: int):
 
         _ = User(from_id=from_id).save()
 
+    @classmethod
     def get(cls, from_id: int) -> User:
 
         user: User = User.get_or_create(User.from_id == from_id)
@@ -46,6 +64,7 @@ class UserMethod:
 
 class HedgehogMethod:
 
+    @classmethod
     def add(
             cls,
             from_id: int,
@@ -62,6 +81,7 @@ class HedgehogMethod:
             picture=picture
         ).save()
 
+    @classmethod
     def get(
             cls,
             from_id: int,
@@ -76,6 +96,7 @@ class HedgehogMethod:
         )
         return hedgehog
 
+    @classmethod
     def apples(
             cls,
             from_id: int,
