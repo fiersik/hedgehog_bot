@@ -1,6 +1,6 @@
 # ==============================
-from vkbottle import BotLabeler, VKAPIError
-from vkbottle.bot import Message
+from vkbottle import VKAPIError
+from vkbottle.bot import Message, BotLabeler
 
 from config import bot_api, DB
 from modules import Mykeyboard as MK

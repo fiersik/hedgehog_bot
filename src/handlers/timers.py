@@ -26,9 +26,10 @@ async def news():
             await bot_api.messages.send(
                 peer_ids=ids,
                 message="""
-К вам забежал маленький ёжик.
+    К вам забежал маленький ёжик.
 
-Напиши 'Взять ёжика', чтобы подобрать его к себе""",
+    Напиши 'Взять ёжика', чтобы подобрать его к себе""",
                 attachment=attachment,
+                random_id=0
             )
         DB.chat.new_hedgehog(picture)

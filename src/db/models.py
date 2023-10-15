@@ -14,7 +14,7 @@ from peewee import (
 )
 # ==============================
 
-db = SqliteDatabase("hedgehog.db")
+db = SqliteDatabase("hedgehog.db", autoconnect=True)
 # ==============================
 
 

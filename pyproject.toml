@@ -10,6 +10,7 @@ packages = [{include = "hedgehog_bot"}]
 python = "^3.10"
 vkbottle = {url = "https://github.com/vkbottle/vkbottle/archive/refs/heads/dev.zip"}
 peewee = "^3.16.3"
+loguru = "^0.7.2"
 
 
 [build-system]
