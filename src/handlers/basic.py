@@ -2,6 +2,7 @@
 from vkbottle.bot import BotLabeler, Message
 
 from config import DB, bot_api
+from db.models import Hedgehog
 # ==============================
 
 basic = BotLabeler()
@@ -57,5 +58,24 @@ async def exactly_remove_hedgehog(m: Message):
         f"О нет, [id{m.from_id}|{first_name} {last_name}].\n"
         "Ну ты и негодяй.\n"
         "У тебя больше нет ёжика."
+    )
+# ==============================
+
+
+@basic.chat_message(payload={"command": "my_hedgehog"})
+@basic.chat_message(text="мой ёжик")
+async def my_hedgehog(m: Message):
+
+    hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+    if hedgehog is None:
+        return "У вас нет ёжика"
+
+    await m.answer(
+        "Ваш ёжик:\n"
+        f"Имя: {hedgehog.name}.\n"
+        f"Cостояние: {hedgehog.condition}.\n"
+        f"Сытость: {hedgehog.hunger}.\n"
+        f"Яблочки: {hedgehog.apples}.\n",
+        attachment=hedgehog.picture
     )
 # ==============================
