@@ -39,7 +39,13 @@ class ChatMethod:
         chat.delete_instance()
 
     @classmethod
-    def new_hedgehog(cls, picture: str | None):
+    def new_hedgehog(cls, picture: str | None = None, chat_id: int | None = None):
+
+        if picture is None:
+            chat = cls.get(chat_id)
+            chat.new_hedgehog = None
+            chat.save()
+            return
 
         for chat in cls._get_subscribers():
             chat.new_hedgehog = picture
@@ -60,15 +66,19 @@ class ChatMethod:
 class UserMethod:
 
     @classmethod
-    def add(cls, from_id: int):
+    def add(cls, from_id: int) -> User:
 
         user = User(from_id=from_id)
         user.save()
+        return user
 
     @classmethod
     def get(cls, from_id: int) -> User:
 
-        user: User = User.get_or_create(User.from_id == from_id)
+        user: User | None = User.get_or_none(User.from_id == from_id)
+        if user is None:
+            user = cls.add(from_id)
+
         return user
 
     @classmethod
@@ -109,7 +119,7 @@ class HedgehogMethod:
         chat = DB.chat.get(chat_id)
 
         hedgehog: Hedgehog = Hedgehog.get_or_none(
-            (Hedgehog.owner == owner) & (Chat.chat == chat)
+            (Hedgehog.owner == owner) & (Hedgehog.chat == chat)
         )
         return hedgehog
 
