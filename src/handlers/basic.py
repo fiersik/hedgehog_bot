@@ -2,7 +2,6 @@
 from vkbottle.bot import BotLabeler, Message
 
 from config import DB, bot_api
-from db.models import Hedgehog
 # ==============================
 
 basic = BotLabeler()

@@ -1,4 +1,3 @@
-
 from .models import Chat, User, Hedgehog
 # ==============================
 
@@ -122,6 +121,22 @@ class HedgehogMethod:
             (Hedgehog.owner == owner) & (Hedgehog.chat == chat)
         )
         return hedgehog
+
+    def get_all(state: str | None = None):
+        """
+        state может быть:\n
+        отличное\n
+        голоден\n
+        мёртв
+        """
+        if state is None:
+            for hedgehog in Hedgehog.select():
+                hedgehog: Hedgehog
+                yield hedgehog
+        else:
+            for hedgehog in Hedgehog.select(Hedgehog.condition == state):
+                hedgehog: Hedgehog
+                yield hedgehog
 
     @classmethod
     def delete(
