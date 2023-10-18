@@ -3,13 +3,12 @@ from peewee import (
     SqliteDatabase,
     Model,
 
-    PrimaryKeyField,
+    AutoField,
     ForeignKeyField,
     IntegerField,
     BooleanField,
     TextField,
     DateTimeField,
-    TimeField
 
 )
 # ==============================
@@ -20,7 +19,7 @@ db = SqliteDatabase("hedgehog.db", autoconnect=True)
 
 class BaseModel(Model):
 
-    id = PrimaryKeyField()
+    id = AutoField()
 
     class Meta:
         database = db
@@ -34,7 +33,7 @@ class Chat(BaseModel):
     new_hedgehog = TextField(null=True)
 
     class Meta:
-        db_table = "chats"
+        table_name = "chats"
 # ==============================
 
 
@@ -42,26 +41,27 @@ class User(BaseModel):
 
     from_id = IntegerField(unique=True)
     vip = BooleanField(default=False)
-    activation_time = DateTimeField(null=True)
     deactivation_time = DateTimeField(null=True)
 
     class Meta:
-        db_table = "users"
+        table_name = "users"
 # ==============================
 
 
 class Hedgehog(BaseModel):
 
-    owner = ForeignKeyField(User)
-    chat = ForeignKeyField(Chat)
+    owner: User = ForeignKeyField(User)
+    chat: Chat = ForeignKeyField(Chat)
     name = TextField(default="Мой ёжик")
     picture = TextField()
     lvl = IntegerField(default=1)
+    xp = IntegerField(default=0)
     condition = TextField(default="отличное")
     apples = IntegerField(default=50)
     hunger = IntegerField(default=24)
-    food_Time = TimeField(null=True)
-    working_time = TimeField(null=True)
+    death_time = DateTimeField(null=True)
+    food_Time = DateTimeField(null=True)
+    working_time = DateTimeField(null=True)
 
     class Meta:
         db_table = "hedgehogs"
