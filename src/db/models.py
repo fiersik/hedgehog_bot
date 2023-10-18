@@ -60,7 +60,7 @@ class Hedgehog(BaseModel):
     apples = IntegerField(default=50)
     hunger = IntegerField(default=24)
     death_time = DateTimeField(null=True)
-    food_Time = DateTimeField(null=True)
+    food_time = DateTimeField(null=True)
     working_time = DateTimeField(null=True)
 
     class Meta:

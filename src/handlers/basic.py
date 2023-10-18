@@ -1,4 +1,6 @@
 # ==============================
+from datetime import datetime, timedelta
+
 from vkbottle.bot import BotLabeler, Message
 
 from config import DB, bot_api
@@ -78,3 +80,31 @@ async def my_hedgehog(m: Message):
         attachment=hedgehog.picture
     )
 # ==============================
+
+
+@basic.chat_message(payload={"command": "feed_hedgehog"})
+@basic.chat_message(text="покормить ёжика")
+async def feed_hedgehog(m: Message):
+
+    hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+    food_time = hedgehog.food_time
+    now_time = datetime.now()
+
+    if hedgehog is None:
+        return "У вас ещё нет ёжиа."
+    if hedgehog.condition == "мёртв":
+        return "Ваш ёжик мёртв :("
+    if hedgehog.hunger == 24:
+        return "Ваш ёжик не голоден."
+
+    if food_time is None or food_time <= now_time:
+
+        hedgehog.hunger += 1
+        hedgehog.food_time = now_time + timedelta(hours=4)
+        hedgehog.death_time = None
+        hedgehog.condition = "отличное"
+        hedgehog.save()
+
+        return "Вы покормили вашего ёжика, он вам очень благодарен!"
+    else:
+        return "Кормить ёжика можно раз в 4 часа, попробуйте позже."
