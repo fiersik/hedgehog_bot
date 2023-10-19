@@ -38,28 +38,29 @@ async def news():
 @lw.interval(hours=6)
 async def hunger():
 
-    for hedgehog in DB.hedgehog.get_all(state="отличное"):
+    for hedgehog in DB.hedgehog.get_all():
+        if hedgehog.condition == "отличное":
 
-        hedgehog.hunger -= 1
-        hedgehog.save()
-
-        if not hedgehog.hunger:
-            hedgehog.condition = "голоден"
-            hedgehog.death_time = datetime.now()
+            hedgehog.hunger -= 1
             hedgehog.save()
 
-            chat_id = hedgehog.chat.peer_id
-            owner = hedgehog.owner.from_id
+            if not hedgehog.hunger:
+                hedgehog.condition = "голоден"
+                hedgehog.death_time = datetime.now()
+                hedgehog.save()
 
-            user_info = (await bot_api.users.get(owner))[0]
-            first_name = user_info.first_name
-            last_name = user_info.last_name
-            mention = f"[id{owner}|{first_name} {last_name}]"
+                chat_id = hedgehog.chat.peer_id
+                owner = hedgehog.owner.from_id
 
-            message = f"О нет, {mention}, твой ёжик голоден!"
+                user_info = (await bot_api.users.get(owner))[0]
+                first_name = user_info.first_name
+                last_name = user_info.last_name
+                mention = f"[id{owner}|{first_name} {last_name}]"
 
-            await bot_api.messages.send(
-                peer_id=chat_id,
-                message=message,
-                random_id=0
-            )
+                message = f"О нет, {mention}, твой ёжик голоден!"
+
+                await bot_api.messages.send(
+                    peer_id=chat_id,
+                    message=message,
+                    random_id=0
+                )
