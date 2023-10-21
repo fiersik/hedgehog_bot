@@ -1,7 +1,5 @@
 from vkbottle import Keyboard, KeyboardButtonColor, Text
 
-from db.models import Hedgehog
-
 
 class Mykeyboard:
 
@@ -21,12 +19,28 @@ class Mykeyboard:
         )
     )
 
-    def hedgehog_info(eat: bool) -> Keyboard:
+    def hedgehog_info(
+        eat: bool,
+        send_working: bool,
+        pick_working: bool
+    ) -> Keyboard:
 
         keyboard = Keyboard(inline=True)
         if eat:
             keyboard.add(
                 Text("покормить", {"command": "feed_hedgehog"}),
+                KeyboardButtonColor.POSITIVE
+            )
+            keyboard.row()
+        if pick_working:
+            keyboard.add(
+                Text("забрать с работы", {"command": "pick_from_work"}),
+                KeyboardButtonColor.POSITIVE
+            )
+            keyboard.row()
+        if send_working:
+            keyboard.add(
+                Text("отправить на работу", {"command": "send_to_work"}),
                 KeyboardButtonColor.POSITIVE
             )
             keyboard.row()

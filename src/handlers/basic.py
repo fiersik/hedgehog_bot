@@ -1,5 +1,6 @@
 # ==============================
 from datetime import datetime, timedelta
+import random
 
 from vkbottle.bot import BotLabeler, Message
 
@@ -88,29 +89,51 @@ async def my_hedgehog(m: Message):
 async def hedgehog_information(m: Message):
 
     hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+    food_time = hedgehog.food_time
+    work_time = hedgehog.working_time
+    now_time = datetime.now()
 
     if hedgehog is None:
         return "У вас ещё нет ёжиа."
     if hedgehog.condition == "мёртв":
         return "Ваш ёжик мёртв :("
 
-    if (hedgehog.food_time is None
-            or hedgehog.food_time <= datetime.now()):
-        feeding_info = "Ёжика можно покормить.\n"
+    if hedgehog.hunger == 24:
+        feeding_info = "Не голоден."
+        feeding = False
+    elif (food_time is None or food_time <= now_time):
+        feeding_info = "Можно покормить.\n"
         feeding = True
     else:
-        time_f = hedgehog.food_time - datetime.now()
+        time_f = food_time - datetime.now()
         time_f = time_f.seconds
         hour_f = time_f / 60 // 60
         minutes_f = (time_f - hour_f*60*60) // 60
         feeding_info = f"Можно покормить через {int(hour_f)} ч. {int(minutes_f)} м.\n"
         feeding = False
 
-    info = feeding_info
+    if not hedgehog.at_work:
+        working_info = "Можно отправить на работу."
+        send_working = True
+        pick_working = False
+    elif work_time < now_time:
+        working_info = "Можно забрать с работы."
+        send_working = False
+        pick_working = True
+    else:
+        time_w = work_time - datetime.now()
+        time_w = time_w.seconds
+        hour_w = time_w / 60 // 60
+        minutes_w = (time_w - hour_w*60*60) // 60
+        working_info = f"Можно забрать с работы через {int(hour_w)} ч. {int(minutes_w)} м.\n"
+        send_working = False
+        pick_working = False
+
+    info = feeding_info + "\n" + working_info
 
     await m.answer(
         info,
-        keyboard=MK.hedgehog_info(feeding)
+        keyboard=MK.hedgehog_info(feeding, send_working, pick_working)
     )
 # ==============================
 
@@ -141,3 +164,65 @@ async def feed_hedgehog(m: Message):
         return "Вы покормили вашего ёжика, он вам очень благодарен!"
     else:
         return "Кормить ёжика можно раз в 4 часа, попробуйте позже."
+# ==============================
+
+
+@basic.chat_message(text="отправить ёжика на работу")
+@basic.chat_message(payload={"command": "send_to_work"})
+async def send_to_work(m: Message):
+
+    hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+
+    if hedgehog is None:
+        return "У вас ещё нет ёжиа."
+    if hedgehog.condition == "мёртв":
+        return "Ваш ёжик мёртв :("
+    if hedgehog.at_work:
+        return "Ваш ёжик сейчас на работе."
+
+    work_time = hedgehog.working_time
+    now_time = datetime.now()
+
+    if hedgehog.at_work:
+        if work_time < now_time:
+            return "сначала заберите ёжика с работы."
+        return "Ваш ёжик ещё работает."
+
+    if work_time is None or work_time < now_time:
+        hedgehog.at_work = True
+        hedgehog.working_time = now_time + timedelta(hours=3)
+        hedgehog.save()
+
+        return "Ваш ёжик отправился на работу, не забудьте забрать его через 3 часа."
+
+
+@basic.chat_message(text="забрать ёжика с работы")
+@basic.chat_message(payload={"command": "pick_from_work"})
+async def pick_from_work(m: Message):
+
+    hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+
+    if hedgehog is None:
+        return "У вас ещё нет ёжиа."
+    if hedgehog.condition == "мёртв":
+        return "Ваш ёжик мёртв :("
+    if not hedgehog.at_work:
+        "Ваш ёжик сейчас не на работе."
+
+    now_time = datetime.now()
+
+    if hedgehog.working_time < now_time:
+
+        add_apples = random.randrange(40, 80, 5)
+
+        hedgehog.at_work = False
+        hedgehog.apples += add_apples
+        hedgehog.save()
+
+        await m.answer(
+            "Вы забрали вашего ёжика с работы.\n\n"
+            f"+{add_apples} яблочек."
+        )
+    else:
+        return "Ваш ёжик ещё не закончил работу."
+# ==============================

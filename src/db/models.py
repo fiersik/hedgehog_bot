@@ -1,4 +1,6 @@
 # ==============================
+from datetime import datetime
+
 from peewee import (
     SqliteDatabase,
     Model,
@@ -9,7 +11,6 @@ from peewee import (
     BooleanField,
     TextField,
     DateTimeField,
-
 )
 # ==============================
 
@@ -41,7 +42,7 @@ class User(BaseModel):
 
     from_id = IntegerField(unique=True)
     vip = BooleanField(default=False)
-    deactivation_time = DateTimeField(null=True)
+    deactivation_time: datetime = DateTimeField(null=True)
 
     class Meta:
         table_name = "users"
@@ -60,8 +61,9 @@ class Hedgehog(BaseModel):
     apples = IntegerField(default=50)
     hunger = IntegerField(default=24)
     death_time = DateTimeField(null=True)
-    food_time = DateTimeField(null=True)
-    working_time = DateTimeField(null=True)
+    food_time: datetime = DateTimeField(null=True)
+    working_time: datetime = DateTimeField(null=True)
+    at_work = BooleanField(default=False)
 
     class Meta:
         db_table = "hedgehogs"
