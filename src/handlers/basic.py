@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from vkbottle.bot import BotLabeler, Message
 
 from config import DB, bot_api
+from modules import Mykeyboard as MK
 # ==============================
 
 basic = BotLabeler()
@@ -77,7 +78,39 @@ async def my_hedgehog(m: Message):
         f"Cостояние: {hedgehog.condition}.\n"
         f"Сытость: {hedgehog.hunger}.\n"
         f"Яблочки: {hedgehog.apples}.\n",
+        keyboard=MK.my_hedgehog,
         attachment=hedgehog.picture
+    )
+
+
+@basic.chat_message(payload={"command": "hedgehog_info"})
+@basic.chat_message(text="ёжик инфо")
+async def hedgehog_information(m: Message):
+
+    hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+
+    if hedgehog is None:
+        return "У вас ещё нет ёжиа."
+    if hedgehog.condition == "мёртв":
+        return "Ваш ёжик мёртв :("
+
+    if (hedgehog.food_time is None
+            or hedgehog.food_time <= datetime.now()):
+        feeding_info = "Ёжика можно покормить.\n"
+        feeding = True
+    else:
+        time_f = hedgehog.food_time - datetime.now()
+        time_f = time_f.seconds
+        hour_f = time_f / 60 // 60
+        minutes_f = (time_f - hour_f*60*60) // 60
+        feeding_info = f"Можно покормить через {int(hour_f)} ч. {int(minutes_f)} м.\n"
+        feeding = False
+
+    info = feeding_info
+
+    await m.answer(
+        info,
+        keyboard=MK.hedgehog_info(feeding)
     )
 # ==============================
 

@@ -35,7 +35,7 @@ async def news():
         DB.chat.new_hedgehog(picture)
 
 
-@lw.interval(seconds=1)
+@lw.interval(hours=6)
 async def hunger():
 
     for hedgehog in DB.hedgehog.get_all():
@@ -70,7 +70,8 @@ async def hunger():
 async def of_death():
 
     for hedgehog in DB.hedgehog.get_all():
-        if (hedgehog.death_time <= datetime.now()
+        if (hedgehog.death_time is not None
+                and hedgehog.death_time <= datetime.now()
                 and hedgehog.condition != "мёртв"):
 
             hedgehog.condition = "мёртв"
