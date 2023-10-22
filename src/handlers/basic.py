@@ -33,6 +33,24 @@ async def take_a_hedgehog(m: Message):
     return "Теперь у вас есть милый ёжик, посмотрите на него командой 'мой ёжик'"
 
 
+@basic.chat_message(text=["дать ёжику имя", "дать ёжику имя <name>"])
+async def set_name(m: Message, name: str | None = None):
+
+    hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+    if hedgehog is None:
+        return "У вас нет ёжика"
+    if name is None:
+        return "укажите имя для ёжика\nНапример: дать ёжику имя Раппи"
+
+    if not name.isalpha():
+        return "Неверный формат имени."
+
+    hedgehog.name = name
+    hedgehog.save()
+
+    return f"Теперь вашего ёжика зовут {name}."
+
+
 @basic.chat_message(text="выкинуть ёжика")
 async def remove_hedgehog(m: Message):
 
