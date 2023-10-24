@@ -1,3 +1,1 @@
-from .func import DB
-
-__all__ = {DB}
+from .func import DB  # noqa: F401

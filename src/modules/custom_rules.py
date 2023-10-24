@@ -3,7 +3,7 @@ from vkbottle.bot import Message
 
 
 class admin_rule(ABCRule[Message]):
-
+    """проверка на админа в беседе"""
     async def check(self, event: Message) -> bool:
 
         members = await event.ctx_api.messages.get_conversation_members(event.peer_id)

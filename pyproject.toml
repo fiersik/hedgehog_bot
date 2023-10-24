@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hedgehog-bot"
-version = "0.1.0"
+version = "1.0.dev1"
 description = ""
 authors = ["Fiersik <tltkirik@gmail.com>"]
 readme = "README.md"

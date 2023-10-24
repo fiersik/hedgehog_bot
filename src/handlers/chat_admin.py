@@ -2,7 +2,7 @@
 from vkbottle.bot import Message, BotLabeler
 
 from config import DB
-from modules import admin_rule
+from modules.custom_rules import admin_rule
 # ==============================
 
 admin = BotLabeler()

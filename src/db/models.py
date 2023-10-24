@@ -19,7 +19,7 @@ db = SqliteDatabase("hedgehog.db", autoconnect=True)
 
 
 class BaseModel(Model):
-
+    """базовая модель"""
     id = AutoField()
 
     class Meta:
@@ -28,7 +28,7 @@ class BaseModel(Model):
 
 
 class Chat(BaseModel):
-
+    """модель чата"""
     peer_id = IntegerField(unique=True)
     newsletter = BooleanField(default=False)
     new_hedgehog = TextField(null=True)
@@ -39,7 +39,7 @@ class Chat(BaseModel):
 
 
 class User(BaseModel):
-
+    """модель пользователя"""
     from_id = IntegerField(unique=True)
     vip = BooleanField(default=False)
     deactivation_time: datetime = DateTimeField(null=True)
@@ -50,7 +50,7 @@ class User(BaseModel):
 
 
 class Hedgehog(BaseModel):
-
+    """модель ёжика"""
     owner: User = ForeignKeyField(User)
     chat: Chat = ForeignKeyField(Chat)
     name = TextField(default="Мой ёжик")

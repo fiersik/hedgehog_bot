@@ -5,7 +5,7 @@ import random
 from vkbottle.bot import BotLabeler, Message
 
 from config import DB, bot_api
-from modules import Mykeyboard as MK
+from modules.keyboards import Mykeyboard as MK
 # ==============================
 
 basic = BotLabeler()
@@ -42,7 +42,7 @@ async def set_name(m: Message, name: str | None = None):
     if name is None:
         return "укажите имя для ёжика\nНапример: дать ёжику имя Раппи"
 
-    if not name.isalpha():
+    if not name.isalpha():  # содержит не только буквенные символы
         return "Неверный формат имени."
 
     hedgehog.name = name

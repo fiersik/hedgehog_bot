@@ -1,4 +1,5 @@
 from .models import Chat, User, Hedgehog
+from modules.tools import gen_list
 # ==============================
 
 
@@ -6,7 +7,7 @@ class ChatMethod:
 
     @classmethod
     def add(cls, chat_id: int):
-
+        """создание записи чата"""
         chat = cls.get(chat_id)
         if chat is None:
             chat = Chat(peer_id=chat_id)
@@ -14,32 +15,30 @@ class ChatMethod:
 
     @classmethod
     def get(cls, chat_id: int) -> Chat | None:
-
+        """получение записи чата"""
         chat: Chat | None = Chat.get_or_none(Chat.peer_id == chat_id)
         return chat
 
     def _get_subscribers():
-
+        """получение подписчиков рассылки"""
         for chat in Chat.select().where(Chat.newsletter):
             yield chat
 
     @classmethod
     def get_subscribers_id(cls):
-
+        """получение id подписчиков рассылки"""
         subs_id = [chat.peer_id for chat in cls._get_subscribers()]
-
-        for i in range((len(subs_id) + 99) // 100):
-            yield subs_id[i*100:(i+1)*100]
+        return gen_list(subs_id, 100)
 
     @classmethod
     def delele(cls, chat_id: int):
-
+        """удаление записи чата"""
         chat = cls.get(chat_id)
         chat.delete_instance()
 
     @classmethod
     def new_hedgehog(cls, picture: str | None = None, chat_id: int | None = None):
-
+        """указывает нового ёжика для рассылки"""
         if picture is None:
             chat = cls.get(chat_id)
             chat.new_hedgehog = None
@@ -52,7 +51,7 @@ class ChatMethod:
 
     @classmethod
     def newsletter(cls, chat_id: int, state: bool) -> bool:
-
+        """изменяет статус подписки на рассылку"""
         chat = cls.get(chat_id=chat_id)
         if chat.newsletter == state:
             return False
@@ -66,14 +65,14 @@ class UserMethod:
 
     @classmethod
     def add(cls, from_id: int) -> User:
-
+        """создание записи пользователя"""
         user = User(from_id=from_id)
         user.save()
         return user
 
     @classmethod
     def get(cls, from_id: int) -> User:
-
+        """получение записи пользователя"""
         user: User | None = User.get_or_none(User.from_id == from_id)
         if user is None:
             user = cls.add(from_id)
@@ -82,7 +81,7 @@ class UserMethod:
 
     @classmethod
     def delete(cls, from_id: int):
-
+        """удаление записи пользователя"""
         user = cls.get(from_id)
         user.delete_instance()
 
@@ -96,7 +95,7 @@ class HedgehogMethod:
             chat_id: int,
             picture: str,
     ):
-
+        """создание записи ёжика"""
         owner = DB.user.get(from_id)
         chat = DB.chat.get(chat_id)
 
@@ -113,7 +112,7 @@ class HedgehogMethod:
             from_id: int,
             chat_id: int
     ) -> Hedgehog | None:
-
+        """получение записи ёжика"""
         owner = DB.user.get(from_id)
         chat = DB.chat.get(chat_id)
 
@@ -123,6 +122,7 @@ class HedgehogMethod:
         return hedgehog
 
     def get_all():
+        """получение всех ёжиков"""
         for hedgehog in Hedgehog.select():
             hedgehog: Hedgehog
             yield hedgehog
@@ -133,21 +133,9 @@ class HedgehogMethod:
             from_id: int,
             chat_id: int
     ):
-
+        """удаление записи ёжика"""
         hedgehog = cls.get(from_id, chat_id)
         hedgehog.delete_instance()
-
-    @classmethod
-    def apples(
-            cls,
-            from_id: int,
-            chat_id: int,
-            number: int
-    ):
-
-        hedgehog = cls.get(from_id=from_id, chat_id=chat_id)
-        hedgehog.apples = hedgehog.apples + number
-        hedgehog.save()
 
 
 class DB:

@@ -33,7 +33,7 @@
 
 ***
 
-Copyright © 2023 [fiersik ](https://github.com/fiersik).
+Copyright © 2023 [fiersik ](https://github.com/fiersik)
 
 
 

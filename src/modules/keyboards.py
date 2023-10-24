@@ -2,7 +2,7 @@ from vkbottle import Keyboard, KeyboardButtonColor, Text
 
 
 class Mykeyboard:
-
+    """клавиатуры для чатов"""
     start_keyboard = (
         Keyboard(inline=True)
         .add(

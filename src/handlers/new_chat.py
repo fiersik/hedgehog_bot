@@ -3,7 +3,7 @@ from vkbottle import VKAPIError
 from vkbottle.bot import Message, BotLabeler
 
 from config import bot_api, DB
-from modules import Mykeyboard as MK
+from modules.keyboards import Mykeyboard as MK
 # ==============================
 
 new_chat = BotLabeler()

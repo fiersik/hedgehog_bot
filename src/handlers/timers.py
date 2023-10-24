@@ -3,20 +3,20 @@ import random
 
 from vkbottle import LoopWrapper
 
-from config import bot_api, server_api, DB
+from config import bot_api, server_api, DB, group_id, hedgehog_albom_id
 
 lw = LoopWrapper()
 
 
 @lw.interval(minutes=1)
 async def news():
-
+    """рассылка ёжиков по чатам"""
     time = datetime.now()
-    if not time.hour % 2 and not time.minute:
+    if time.hour % 2 and not time.minute:
 
         pictures = await server_api.photos.get(
-            -219000856,
-            299084525,
+            group_id,
+            hedgehog_albom_id
         )
         picture = random.choice(pictures.items)
         attachment = f"photo{picture.owner_id}_{picture.id}"
@@ -32,12 +32,12 @@ async def news():
                 attachment=attachment,
                 random_id=0
             )
-        DB.chat.new_hedgehog(picture)
+        DB.chat.new_hedgehog(attachment)
 
 
 @lw.interval(hours=6)
 async def hunger():
-
+    """голод ёжиков"""
     for hedgehog in DB.hedgehog.get_all():
         if hedgehog.condition == "отличное":
 
@@ -68,7 +68,7 @@ async def hunger():
 
 @lw.interval(minutes=1)
 async def of_death():
-
+    """смерти голодных ёжиков"""
     for hedgehog in DB.hedgehog.get_all():
         if (hedgehog.death_time is not None
                 and hedgehog.death_time <= datetime.now()
