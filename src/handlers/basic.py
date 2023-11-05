@@ -1,6 +1,7 @@
 # ==============================
 from datetime import datetime, timedelta
 import random
+import re
 
 from vkbottle.bot import BotLabeler, Message
 
@@ -244,3 +245,28 @@ async def pick_from_work(m: Message):
     else:
         return "Ваш ёжик ещё не закончил работу."
 # ==============================
+
+
+@basic.chat_message(text="передать яблочки <quantity> <user>")
+async def give_the_item(m: Message, quantity: str, user: str):
+
+    user_id = int(re.findall(r"[0-9]+", user)[0])
+    if user_id == m.from_id:
+        return "Вы не можете передать яблочки самому себе."
+    from_hedgehog = DB.hedgehog.get(m.from_id, m.peer_id)
+    user_hedgehog = DB.hedgehog.get(user_id, m.peer_id)
+
+    quantity = int(quantity)
+
+    if from_hedgehog is None:
+        return "У вас нет ёжика."
+    if user_hedgehog is None:
+        return "У данного пользователя нет ёжика в этой беседе."
+    if from_hedgehog.apples < quantity:
+        return "У вас недостаточно яблочек."
+
+    from_hedgehog.apples -= quantity
+    from_hedgehog.save()
+    user_hedgehog.apples += quantity
+    user_hedgehog.save()
+    return f"Яблочек передано - {quantity}"

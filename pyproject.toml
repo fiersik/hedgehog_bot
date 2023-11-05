@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "hedgehog-bot"
-version = "1.0.dev1"
-description = ""
+version = "1.0"
+description = "vk MMORPG hedgehog bot"
 authors = ["Fiersik <tltkirik@gmail.com>"]
 readme = "README.md"
-packages = [{include = "hedgehog_bot"}]
+packages = [{ include = "hedgehog_bot" }]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-vkbottle = {url = "https://github.com/vkbottle/vkbottle/archive/refs/heads/dev.zip"}
+vkbottle = { url = "https://github.com/vkbottle/vkbottle/archive/refs/heads/dev.zip" }
 peewee = "^3.16.3"
 loguru = "^0.7.2"
 
