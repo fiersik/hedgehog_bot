@@ -1,5 +1,5 @@
 from .models import Chat, User, Hedgehog
-from modules.tools import gen_list
+from components.tools import gen_list
 # ==============================
 
 

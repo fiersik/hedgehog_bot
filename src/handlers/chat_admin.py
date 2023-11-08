@@ -1,8 +1,8 @@
 # ==============================
 from vkbottle.bot import Message, BotLabeler
 
-from config import DB
-from modules.custom_rules import admin_rule
+from components.rules import admin_rule
+from services.admin import News
 # ==============================
 
 admin = BotLabeler()
@@ -11,26 +11,12 @@ admin.vbml_ignore_case = True
 
 
 @admin.chat_message(admin_rule(), text="подписаться на рассылку")
-async def news(m: Message):
-    if DB.chat.newsletter(m.peer_id, True):
-        await m.answer(
-            "Вы подписались на рассылку."
-            "Каждые 2 часа вашей беседе будет приходить ёжик."
-        )
-        return
+async def news_handler(m: Message):
 
-    await m.answer(
-        "Вы уже подписаны на рассылку."
-    )
+    await News.on(m)
 
 
 @admin.chat_message(admin_rule(), text="Отписаться от рассылки")
-async def no_news(m: Message):
+async def no_news_handler(m: Message):
 
-    if DB.chat.newsletter(m.peer_id, False):
-        await m.answer(
-            "Вы отписались от рассылки :("
-        )
-        return
-
-    await m.answer("вы не подписаны на рассылку.")
+    await News.off(m)
