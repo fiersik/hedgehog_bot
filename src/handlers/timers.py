@@ -11,7 +11,7 @@ async def news():
     await News.sending_hedgehogs()
 
 
-@lw.interval(hours=6)
+@lw.interval(hours=8)
 async def hunger():
     """голод ёжиков"""
     await Statistics.hunger()
