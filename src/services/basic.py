@@ -7,6 +7,7 @@ from vkbottle.bot import Message
 from components.keyboards import Mykeyboard as MK
 from db.models import Chat, Hedgehog
 from db.func import DB
+from .random_events import Events
 
 
 class Actions:
@@ -86,13 +87,20 @@ class Food:
 
         if food_time is None or food_time <= now_time:
 
-            hedgehog.hunger += 1
             hedgehog.food_time = now_time + timedelta(hours=4)
+            hedgehog.save()
+
+            event_ans = await Events.eat.get(hedgehog)
+            if event_ans and event_ans.stop:
+                return event_ans.text
+
+            hedgehog.hunger += 1
+
             hedgehog.death_time = None
             hedgehog.condition = "отличное"
             hedgehog.save()
 
-            return "Вы покормили вашего ёжика, он вам очень благодарен!"
+            return event_ans.text if event_ans else "Вы покормили вашего ёжика, он вам очень благодарен!"
         else:
             return "Кормить ёжика можно раз в 4 часа, попробуйте позже."
 
@@ -193,6 +201,7 @@ class Work:
             return "Ваш ёжик уже на работе"
 
         if work_time is None or work_time < now_time:
+
             hedgehog.at_work = True
             hedgehog.working_time = now_time + timedelta(hours=3)
             hedgehog.save()
@@ -218,9 +227,14 @@ class Work:
             hedgehog.apples += add_apples
             hedgehog.save()
 
+            event_ans = await Events.work.get(hedgehog)
+            if event_ans and event_ans.stop:
+                return event_ans.text
+
             await m.answer(
-                "Вы забрали вашего ёжика с работы.\n\n"
-                f"+{add_apples} яблочек."
+                "Вы забрали вашего ёжика с работы.\n"
+                f"{event_ans.text if event_ans else ''}\n"
+                f"Яблочки: +{add_apples}"
             )
         else:
             return "Ваш ёжик ещё не закончил работу."

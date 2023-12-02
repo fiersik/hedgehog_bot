@@ -137,6 +137,29 @@ class HedgehogMethod:
         hedgehog = cls.get(from_id, chat_id)
         hedgehog.delete_instance()
 
+    @classmethod
+    def up_mood(
+            cls,
+            mood: int,
+            from_id: int | None = None,
+            chat_id: int | None = None,
+            hedgehog: Hedgehog = None
+    ):
+        """меняет настроения ёжика"""
+        if hedgehog is None:
+            hedgehog = cls.get(from_id, chat_id)
+        hedgehog.mood += mood
+        if hedgehog.mood > 30:
+            upped_mood = mood - hedgehog.mood + 30
+            hedgehog.mood = 30
+        elif hedgehog.mood < 0:
+            upped_mood = mood + - hedgehog.mood
+            hedgehog.mood = 0
+        else:
+            upped_mood = mood
+        hedgehog.save()
+        return int(upped_mood)
+
 
 class DB:
 
