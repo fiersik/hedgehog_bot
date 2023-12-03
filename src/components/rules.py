@@ -10,3 +10,9 @@ class admin_rule(ABCRule[Message]):
         admins = [member.member_id for member in members.items if member.is_admin]
 
         return event.from_id in admins
+
+
+class creator_rule(ABCRule[Message]):
+
+    async def check(self, event: Message) -> bool:
+        return event.from_id == 603843114

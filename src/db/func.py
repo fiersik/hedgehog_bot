@@ -19,6 +19,18 @@ class ChatMethod:
         chat: Chat | None = Chat.get_or_none(Chat.peer_id == chat_id)
         return chat
 
+    @classmethod
+    def _get_all(cls):
+        """получение всех чатов"""
+        for chat in Chat.select():
+            yield chat
+
+    @classmethod
+    def get_all_ids(cls):
+        """получение id всех чатов"""
+        ids = [chat.peer_id for chat in cls._get_all()]
+        return gen_list(ids, 100)
+
     def _get_subscribers():
         """получение подписчиков рассылки"""
         for chat in Chat.select().where(Chat.newsletter):
