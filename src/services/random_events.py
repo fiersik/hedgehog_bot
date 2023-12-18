@@ -22,9 +22,12 @@ class RandomEvents:
 
     async def get(self, hedgehog: Hedgehog):
         """выполняет случайноее действие"""
-        if random.randint(1, 8) == 3:
+        if random.randint(1, 8) == 3:  # basic event
             event = random.choice(self.events)
             ans: EventAnswer = await event(hedgehog)
+            return ans
+        if random.randint(1, 15) == 3:  # goiden apple
+            ans: EventAnswer = await golden_apple(hedgehog)
             return ans
 
     def set(self):
@@ -37,14 +40,28 @@ class RandomEvents:
 work = RandomEvents()
 eat = RandomEvents()
 
-"""
-@_.set()
-async def _(hedgehog: Hedgehog):
-"""
+
+# goiden apple
+async def golden_apple(hedgehog: Hedgehog):
+
+    text = random.choice(
+        [
+            "По пути он увидел необычное блестящее яблочко.",
+            "Он нашёл красивое золотое яблочко, что же это такое?",
+            "вместе с обычными он получил одно золотое яблочко."
+        ]
+    )
+
+    upped_mood = DB.hedgehog.up_mood(+4, hedgehog=hedgehog)
+    hedgehog.golden_apples += 1
+    hedgehog.save()
+    text = f"{text}\n\nНастроение: +{upped_mood}{'(Максимальное)' if upped_mood == 0 else ''}\nЗолотые яблочки: +1"
+    return EventAnswer(False, text)
+
+# ==================BASIC EVENTS================
+
 
 # bad events
-
-
 @eat.set()
 async def choked(hedgehog: Hedgehog):
 
@@ -66,6 +83,7 @@ async def choked(hedgehog: Hedgehog):
 
 @work.set()
 async def tired(hedgehog: Hedgehog):
+
     text = random.choice(
         [
             "Он очень сильно устал.",
@@ -100,21 +118,22 @@ async def liked(hedgehog: Hedgehog):
     )
 
     upped_mood = DB.hedgehog.up_mood(+5, hedgehog=hedgehog)
-    text = f"{text}\n\nНастроение: +{upped_mood}\nСытость: +1"
+    text = f"{text}\n\nНастроение: +{upped_mood}{'(Максимальное)' if upped_mood == 0 else ''}\nСытость: +1"
     return EventAnswer(True, text)
 
 
 @work.set()
 async def praised(hedgehog: Hedgehog):
+
     text = random.choice(
         [
             "Его похвалили и он очень этому рад.",
-            "Его проект понравился начальнику"
+            "Его проект понравился начальнику",
         ]
     )
 
     upped_mood = DB.hedgehog.up_mood(+6, hedgehog=hedgehog)
-    text = f"{text}\n\nНастроение: +{upped_mood}"
+    text = f"{text}\n\nНастроение: +{upped_mood}{'(Максимальное)' if upped_mood == 0 else ''}"
     return EventAnswer(False, text)
 
 

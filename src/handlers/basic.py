@@ -53,7 +53,8 @@ async def my_hedgehog(m: Message, hedgehog: Hedgehog | None):
         f"Cостояние: {hedgehog.condition}.\n"
         f"Настроение: {hedgehog.mood}.\n"
         f"Сытость: {hedgehog.hunger}.\n"
-        f"Яблочки: {hedgehog.apples}.\n",
+        f"Яблочки: {hedgehog.apples}.\n"
+        f"Золотые яблочки: {hedgehog.golden_apples}.\n",
         keyboard=MK.my_hedgehog,
         attachment=hedgehog.picture
     )
