@@ -234,7 +234,7 @@ class Work:
             await m.answer(
                 "Вы забрали вашего ёжика с работы.\n"
                 f"{event_ans.text if event_ans else ''}\n"
-                f"Яблочки: +{add_apples}"
+                f"Яблочки: +{add_apples}{event_ans.bonus.apple if event_ans else ''}"
             )
         else:
             return "Ваш ёжик ещё не закончил работу."

@@ -10,10 +10,15 @@ class EventAnswer:
     def __init__(
             self,
             stop: bool,
-            text: str
+            text: str,
+            apple: int = None
     ):
         self.stop = stop
         self.text = text
+        self.bonus.apple = f"(+{apple})" if apple else ''
+
+    class bonus:
+        apple: str
 
 
 class RandomEvents:
@@ -135,6 +140,24 @@ async def praised(hedgehog: Hedgehog):
     upped_mood = DB.hedgehog.up_mood(+6, hedgehog=hedgehog)
     text = f"{text}\n\nНастроение: +{upped_mood}{'(Максимальное)' if upped_mood == 0 else ''}"
     return EventAnswer(False, text)
+
+
+@work.set()
+async def bonus(hedgehog: Hedgehog):
+
+    text = random.choice(
+        [
+            "Он получил премию как лучший работник.",
+            "Он получил премию, почему бы это не отметить"
+        ]
+    )
+    bonus_sum = random.randrange(70, 100, 5)
+
+    upped_mood = DB.hedgehog.up_mood(+2, hedgehog=hedgehog)
+    text = f"{text}\n\nНастроение: +{upped_mood}{'(Максимальное)' if upped_mood == 0 else ''}"
+
+    hedgehog.apples += bonus_sum
+    return EventAnswer(False, text, bonus_sum)
 
 
 class Events:
