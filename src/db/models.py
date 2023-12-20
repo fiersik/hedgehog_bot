@@ -68,5 +68,5 @@ class Hedgehog(BaseModel):
     at_work = BooleanField(default=False)              # на работе
 
     class Meta:
-        db_table = "hedgehogs"
+        table_name = "hedgehogs"
 # ==============================

@@ -25,8 +25,8 @@ class RandomEvents:
     def __init__(self):
         self.events: list[typing.Coroutine] = []
 
-    async def get(self, hedgehog: Hedgehog):
-        """выполняет случайноее действие"""
+    async def get(self, hedgehog: Hedgehog) -> EventAnswer | None:
+        """выполняет случайное действие"""
         if random.randint(1, 8) == 3:  # basic event
             event = random.choice(self.events)
             ans: EventAnswer = await event(hedgehog)
@@ -34,8 +34,10 @@ class RandomEvents:
         if random.randint(1, 15) == 3:  # goiden apple
             ans: EventAnswer = await golden_apple(hedgehog)
             return ans
+        else:
+            return None
 
-    def set(self):
+    def set(self) -> None:
         def decorator(coroutine: typing.Coroutine):
             self.events.append(coroutine)
             return coroutine

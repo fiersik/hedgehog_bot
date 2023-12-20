@@ -33,7 +33,7 @@ class News:
             DB.chat.new_hedgehog(attachment)
 
 
-class Statistics:
+class Indicators:
 
     async def hunger():
 

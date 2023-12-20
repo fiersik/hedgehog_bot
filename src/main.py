@@ -3,7 +3,9 @@ from vkbottle.bot import Bot
 
 from db.models import db, Chat, User, Hedgehog
 from config import bot_api
-from handlers import labelers, lw
+from handlers.private_message import private_labelers
+from handlers.chat_message import chat_labelers
+from timers import lw
 from components.middleware import all_middleware
 # ==============================
 
@@ -12,7 +14,9 @@ bot = Bot(
     loop_wrapper=lw
 )
 
-for labeler in labelers:
+for labeler in chat_labelers:
+    bot.labeler.load(labeler)
+for labeler in private_labelers:
     bot.labeler.load(labeler)
 
 for middleware in all_middleware:
