@@ -215,7 +215,7 @@ class Work:
         if hedgehog.condition == "мёртв":
             return "Ваш ёжик мёртв :("
         if not hedgehog.at_work:
-            "Ваш ёжик сейчас не на работе."
+            return "Ваш ёжик сейчас не на работе."
 
         now_time = datetime.now()
 

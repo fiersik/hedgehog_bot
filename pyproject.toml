@@ -2,7 +2,7 @@
 name = "hedgehog-bot"
 version = "1.0"
 description = "vk MMORPG hedgehog bot"
-authors = ["Fiersik <tltkirik@gmail.com>"]
+authors = ["Fiersik <it.fiersik@gmail.com>"]
 readme = "README.md"
 packages = [{ include = "hedgehog_bot" }]
 

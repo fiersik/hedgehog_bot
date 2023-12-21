@@ -8,8 +8,3 @@ lw = LoopWrapper()
 async def news():
     """рассылка ёжиков по чатам"""
     await News.sending_hedgehogs()
-
-
-@lw.interval(seconds=5)
-async def test():
-    print("ОГО, ОНО РАБОТАЕТ")
